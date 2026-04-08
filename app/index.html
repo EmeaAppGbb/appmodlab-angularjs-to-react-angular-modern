@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="globalTravelApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GlobalTravel Corp - Corporate Travel Portal</title>
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#/dashboard">GlobalTravel Corp</a>
+      </div>
+      <div class="navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a ui-sref="flights">Flights</a></li>
+          <li><a ui-sref="hotels">Hotels</a></li>
+          <li><a ui-sref="itinerary">Itinerary</a></li>
+          <li><a ui-sref="travelRequest">Travel Requests</a></li>
+          <li><a ui-sref="expenses">Expenses</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div style="margin-top: 70px;">
+    <!-- UI-Router View -->
+    <div ui-view></div>
+  </div>
+
+  <!-- Notification Area (using $rootScope) -->
+  <div class="notification-area" ng-if="notifications.length > 0">
+    <div ng-repeat="notif in notifications" class="alert alert-{{notif.type}}">
+      {{notif.message}}
+    </div>
+  </div>
+
+  <!-- Bower Dependencies -->
+  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="../bower_components/lodash/dist/lodash.min.js"></script>
+  <script src="../bower_components/moment/min/moment.min.js"></script>
+  <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="../bower_components/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+  <script src="../bower_components/restangular/dist/restangular.min.js"></script>
+  <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  <!-- App Files -->
+  <script src="app.js"></script>
+  <script src="app.routes.js"></script>
+
+  <!-- Services -->
+  <script src="services/auth.service.js"></script>
+  <script src="services/api.service.js"></script>
+  <script src="services/user.service.js"></script>
+
+  <!-- Components -->
+  <script src="components/flight-search/flight-search.controller.js"></script>
+  <script src="components/flight-search/flight-search.service.js"></script>
+  <script src="components/hotel-booking/hotel-booking.controller.js"></script>
+  <script src="components/hotel-booking/hotel-booking.service.js"></script>
+  <script src="components/itinerary/itinerary.controller.js"></script>
+  <script src="components/itinerary/itinerary.service.js"></script>
+  <script src="components/travel-request/travel-request.controller.js"></script>
+  <script src="components/travel-request/travel-request.service.js"></script>
+  <script src="components/expense-reconciliation/expense.controller.js"></script>
+  <script src="components/expense-reconciliation/expense.service.js"></script>
+
+  <!-- Directives -->
+  <script src="directives/date-picker.directive.js"></script>
+  <script src="directives/currency-input.directive.js"></script>
+  <script src="directives/approval-status.directive.js"></script>
+
+  <!-- Filters -->
+  <script src="filters/currency.filter.js"></script>
+  <script src="filters/date-format.filter.js"></script>
+</body>
+</html>

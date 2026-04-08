@@ -1,0 +1,30 @@
+{
+  "name": "globaltravel-portal",
+  "version": "1.6.0",
+  "description": "GlobalTravel Corp - Corporate Travel Booking Portal",
+  "private": true,
+  "scripts": {
+    "start": "node api-mock/server.js",
+    "build": "grunt build",
+    "test": "karma start test/karma.conf.js"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.4",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^3.4.0",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-contrib-connect": "^1.0.2",
+    "grunt-contrib-copy": "^1.0.0",
+    "karma": "^1.7.1",
+    "karma-jasmine": "^1.1.2",
+    "karma-chrome-launcher": "^2.2.0",
+    "jasmine-core": "^2.8.0"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.0",
+    "jsonwebtoken": "^9.0.0"
+  }
+}
