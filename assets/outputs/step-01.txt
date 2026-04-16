@@ -1,0 +1,83 @@
+=== Step 01: Explore Legacy AngularJS Application ===
+Prompt: Analyze this legacy AngularJS 1.6.x application (GlobalTravel Corp - Corporate Travel Portal).
+Tool: GitHub Copilot CLI
+
+== Analysis Results ==
+
+### Application Overview
+- **App Name:** GlobalTravel Corp - Corporate Travel Portal
+- **Framework:** AngularJS 1.6.10 with UI-Router, Restangular, Bootstrap 3
+- **Build Tool:** Grunt (concat, uglify, cssmin)
+- **Package Manager:** Bower (legacy) + npm
+- **Mock API:** Express.js on port 3000
+
+### Module Structure (app.js)
+- Main module: 'globalTravelApp'
+- Dependencies: ui.router, ui.bootstrap, restangular
+- Restangular configured with base URL http://localhost:3000/api
+- Auth token interceptor adds JWT from localStorage
+- Run block: route guards via $stateChangeStart, global state on $rootScope
+
+### Routes (app.routes.js) - 6 UI-Router States
+1. login (/login) - Inline template, mock auth
+2. dashboard (/dashboard) - Portal hub, requireAuth
+3. flights (/flights) - FlightSearchController, requireAuth
+4. hotels (/hotels) - HotelBookingController, requireAuth
+5. itinerary (/itinerary) - ItineraryController, requireAuth
+6. travelRequest (/travel-request) - TravelRequestController, requireAuth
+7. expenses (/expenses) - ExpenseController, requireAuth
+
+### Services (3)
+1. **AuthService** - login/logout/isAuthenticated, JWT in localStorage, $rootScope events
+2. **ApiService** - Generic Restangular CRUD wrapper (getAll, getOne, create, update, delete)
+3. **UserService** - getProfile, updatePreferences via Restangular
+
+### Controllers (5)
+1. **FlightSearchController** - Search flights, filter/sort, booking. Heavy jQuery DOM manipulation.
+2. **HotelBookingController** - Hotel search, room selection, booking. jQuery datepickers/modals.
+3. **ItineraryController** - Trip list, day grouping, timeline/list views. Moment.js formatting.
+4. **TravelRequestController** - CRUD travel requests, approval workflow. Deep $watch for cost calc.
+5. **ExpenseController** - Expense reports, receipt upload, dashboard metrics. File handling.
+
+### Component Services (5)
+1. FlightSearchService - search, book, getPopularRoutes, searchAirports
+2. HotelBookingService - searchHotels, getHotelRooms, bookRoom, getReviews
+3. ItineraryService - getTrips, getTripDetails, addNote, cancelItem, shareTrip
+4. TravelRequestService - getRequests, submitRequest, cancelRequest, getPolicyLimits
+5. ExpenseService - getReports, submitReport, uploadReceipt, getStatistics
+
+### Directives (3)
+1. **gt-date-picker** - jQuery UI datepicker wrapper, manual $apply()
+2. **gt-currency-input** - Currency formatting with jQuery events
+3. **gt-approval-status** - Status badge with jQuery animations
+
+### Filters (4)
+1. **usdCurrency** - Manual USD formatting
+2. **gtDateFormat** - Moment.js date formatting (8 presets)
+3. **gtTimeAgo** - Relative time via Moment.js
+4. **gtDuration** - Minutes to "Xh Ym"
+
+### Anti-Patterns Identified
+- jQuery DOM manipulation in controllers ($('#id'), .fadeIn(), .animate())
+- Manual $apply() calls to sync jQuery with Angular digest cycle
+- Deep $watch on complex objects (performance concern)
+- $rootScope as global event bus and state store
+- String concatenation for HTML in directives
+- Moment.js/Lodash for operations now native in modern JS
+- Bower for dependency management
+- No component-based architecture
+- No TypeScript, no type safety
+
+### Bower Dependencies
+- jquery 2.2.4, bootstrap 3.3.7, angular 1.6.10
+- angular-ui-router 0.4.3, angular-ui-bootstrap 2.5.6
+- restangular 1.6.1, lodash 4.17.4, moment 2.18.1
+
+### Mock API (Express.js - port 3000)
+- POST /api/auth/login - JWT authentication
+- GET/POST /api/flights - Flight search/create
+- GET/POST /api/hotels - Hotel search/create
+- GET/POST /api/trips - Trip management
+- GET/POST /api/travel-requests - Travel request workflow
+- GET/POST /api/expense-reports - Expense management
+- JWT middleware on protected routes
