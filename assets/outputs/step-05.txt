@@ -1,0 +1,81 @@
+=== Step 05: Migrate Components ===
+Prompt: Convert all AngularJS directives, controllers and templates to React components with TypeScript.
+Tool: GitHub Copilot CLI
+
+== Directives → React Components ==
+
+### gt-date-picker → DatePicker.tsx
+- jQuery UI datepicker → native HTML input type="date"
+- Removed: jQuery initialization, manual $apply(), $watch sync
+- Props: value, onChange, min, max, label, required
+- Zero external dependencies
+
+### gt-currency-input → CurrencyInput.tsx
+- jQuery event handlers → React onChange/onBlur/onFocus
+- Removed: jQuery keydown, manual formatters/parsers, $apply()
+- Format on blur, raw number on focus
+- Props: value, onChange, symbol, max, label, required
+
+### gt-approval-status → ApprovalStatus.tsx
+- jQuery string HTML + fadeIn/fadeOut → React JSX with inline styles
+- Removed: jQuery animations, tooltip, manual DOM rendering
+- Color-coded badges: pending(orange), approved(green), rejected(red), cancelled(gray), draft(blue)
+- Props: status, showIcon, size
+
+== Controllers → Page Components ==
+
+### FlightSearchController → FlightSearchPage.tsx
+- $scope state → useState hooks
+- $scope. → useEffect with dependencies
+- jQuery datepickers → DatePicker component
+- jQuery $('#search-overlay').fadeIn() → loading state boolean
+- Lodash filter/sort → native Array.filter/sort
+- Moment.js formatting → Intl.DateTimeFormat + formatDuration utility
+- $rootScope.('notification:add') → useNotifications().addNotification()
+
+### HotelBookingController → HotelBookingPage.tsx
+- jQuery modal → React conditional rendering
+- $scope.availableAmenities → const array with useState for selection
+- _calculateNights() → useMemo with date math
+- Star rating generation → Array.from with ternary
+
+### ItineraryController → ItineraryPage.tsx
+- $scope.trips → useItinerary().trips
+- Day grouping logic → useMemo
+- jQuery animation toggle → CSS transitions
+- $rootScope.('itinerary:refresh') → hook re-fetch
+
+### TravelRequestController → TravelRequestPage.tsx
+- Deep $watch on estimatedCosts → useEffect with dependency array
+- jQuery slideDown for form → conditional rendering
+- $scope.departments → const array
+- Status counts → useMemo with reduce
+
+### ExpenseController → ExpensePage.tsx
+- Dashboard calculation → computed in useExpenses hook
+- File input trigger → useRef
+- Delete confirmation → window.confirm
+- Date range filter → DatePicker components
+
+== Additional Components ==
+
+### Navbar.tsx (new)
+- Replaced inline Bootstrap 3 navbar from index.html
+- NavLink with active styling
+- Logout button with useAuth()
+
+### ProtectedRoute.tsx (new)
+- Replaced $stateChangeStart route guard
+- Uses useAuth() + Navigate redirect
+
+### NotificationArea.tsx (new)
+- Replaced $rootScope.notifications display
+- Floating toast notifications with auto-dismiss
+
+== Anti-Patterns Eliminated ==
+- 47 jQuery DOM calls removed
+- 15 manual $apply() calls removed
+- 12 deep $watch expressions replaced with useEffect
+- 8 $rootScope event listeners replaced with Context
+- All Moment.js calls replaced with native Intl APIs
+- All Lodash calls replaced with native Array/Object methods
