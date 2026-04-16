@@ -77,3 +77,162 @@ Filterable list (All/Pending/Approved/Rejected) with search. Includes a "New Req
 ### Expense Reconciliation
 ![Expense Reconciliation](assets/screenshots/07-expenses.png)
 Status filter tabs (All/Draft/Pending/Approved/Rejected), search bar, date range filter, and a "New Report" button. Displays a loading state while fetching expense reports.
+
+---
+
+## CLI Walkthrough — AngularJS to React Migration with GitHub Copilot CLI
+
+This section documents the step-by-step migration performed using **GitHub Copilot CLI** (`gh copilot`). Each step was executed as a CLI prompt, with outputs captured to `assets/outputs/step-NN.txt`, committed, and tagged.
+
+### Prerequisites
+
+- Node.js 18+
+- GitHub Copilot CLI (`gh copilot`)
+- Git
+
+### Setup
+
+```powershell
+cd appmodlab-angularjs-to-react-angular-modern
+git checkout main && git checkout -b solution-final
+New-Item -ItemType Directory -Force -Path assets/outputs
+```
+
+### Step 01 — Explore Legacy AngularJS (`step-01-explore-angularjs`)
+
+Analyzed the complete AngularJS 1.6.x codebase:
+- **5 controllers**: FlightSearch, HotelBooking, Itinerary, TravelRequest, Expense
+- **8 services**: Auth, Api, User + 5 domain services
+- **3 directives**: gt-date-picker, gt-currency-input, gt-approval-status
+- **4 filters**: usdCurrency, gtDateFormat, gtTimeAgo, gtDuration
+- **6 UI-Router states** with auth guards
+- **Express mock API** on port 3000
+- **Anti-patterns identified**: jQuery DOM manipulation, manual `$apply()`, deep `$watch`, `$rootScope` event bus
+
+### Step 02 — Analyze Component Map (`step-02-component-map`)
+
+Mapped every AngularJS artifact to its React equivalent:
+
+| AngularJS | React |
+|-----------|-------|
+| `$stateProvider` | React Router v6 `<Routes>` |
+| `AuthService` | `AuthContext` + `useAuth()` hook |
+| `Restangular` | `apiClient` (typed fetch wrapper) |
+| `$scope` / controllers | `useState` / page components |
+| `$scope.$watch` | `useEffect` with dependencies |
+| `$rootScope` events | React Context dispatch |
+| Directives | Functional components |
+| Filters | Utility functions |
+| Moment.js | `Intl.DateTimeFormat` |
+| Lodash | Native Array/Object methods |
+| Bower/Grunt | npm/Vite |
+
+### Step 03 — Scaffold React Project (`step-03-scaffold-react`)
+
+```powershell
+npm create vite@latest react-app -- --template react-ts
+cd react-app && npm install react-router-dom@6
+```
+
+Created project structure:
+```
+react-app/src/
+├── components/   # Navbar, DatePicker, CurrencyInput, ApprovalStatus, ProtectedRoute, NotificationArea
+├── pages/        # LoginPage, DashboardPage, FlightSearchPage, HotelBookingPage, ItineraryPage, TravelRequestPage, ExpensePage
+├── hooks/        # useFlights, useHotels, useItinerary, useTravelRequests, useExpenses
+├── context/      # AuthContext, NotificationContext
+├── utils/        # format.ts, api.ts
+├── types/        # index.ts (all TypeScript interfaces)
+├── App.tsx       # Root with routing
+└── main.tsx      # Entry point
+```
+
+### Step 04 — Migrate Services (`step-04-migrate-services`)
+
+Converted all AngularJS services to React hooks and context:
+
+- **AuthService** → `AuthContext` + `useAuth()` — JWT in localStorage, login/logout/isAuthenticated
+- **ApiService** → `utils/api.ts` — Typed fetch wrapper with auto-auth headers
+- **FlightSearchService** → `useFlights()` — searchFlights, bookFlight, getPopularRoutes
+- **HotelBookingService** → `useHotels()` — searchHotels, getHotelRooms, bookRoom
+- **ItineraryService** → `useItinerary()` — loadTrips, selectTrip, addNote, cancelItem
+- **TravelRequestService** → `useTravelRequests()` — CRUD operations
+- **ExpenseService** → `useExpenses()` — reports, dashboard, receipt upload
+
+Key modernizations: `$q` promises → async/await, Restangular → fetch API, Lodash → native methods.
+
+### Step 05 — Migrate Components (`step-05-migrate-components`)
+
+Converted all directives and controllers to React components:
+
+**Directives → Components:**
+- `gt-date-picker` → `DatePicker.tsx` (native `<input type="date">`)
+- `gt-currency-input` → `CurrencyInput.tsx` (React events, no jQuery)
+- `gt-approval-status` → `ApprovalStatus.tsx` (JSX badges, no string HTML)
+
+**Controllers → Pages:**
+- `FlightSearchController` → `FlightSearchPage.tsx` — search form, filters, results, booking
+- `HotelBookingController` → `HotelBookingPage.tsx` — search, rooms, booking
+- `ItineraryController` → `ItineraryPage.tsx` — trips, day groups, notes
+- `TravelRequestController` → `TravelRequestPage.tsx` — CRUD, cost breakdown, approval
+- `ExpenseController` → `ExpensePage.tsx` — dashboard, reports, receipt upload
+
+### Step 06 — Migrate Routing (`step-06-migrate-routing`)
+
+Converted UI-Router to React Router v6:
+
+- `$stateProvider.state()` → `<Route>` elements in `App.tsx`
+- `$urlRouterProvider.otherwise` → `<Navigate to="/login">`
+- `ui-sref` → `<NavLink>` with active styling
+- `$stateChangeStart` guard → `<ProtectedRoute>` layout component
+- `$state.go()` → `useNavigate()` hook
+
+### Step 07 — Add State Management (`step-07-state-management`)
+
+Implemented React Context API replacing `$rootScope`:
+
+- **AuthContext** — global auth state (user, token, login/logout)
+- **NotificationContext** — toast notifications with auto-dismiss
+- **Custom hooks** — domain state containers (flights, hotels, itinerary, travel requests, expenses)
+- Eliminated: `$rootScope` event bus, deep `$watch`, manual `$apply()`, service singletons
+
+### Step 08 — Build and Test (`step-08-build-test`)
+
+```powershell
+cd react-app && npm run build
+```
+
+**Results:**
+- TypeScript compilation: **0 errors**
+- Vite production build: **40 modules** transformed
+- Bundle: **284 KB** (83 KB gzipped)
+- Build time: **178ms**
+
+### Tags
+
+```
+step-01-explore-angularjs
+step-02-component-map
+step-03-scaffold-react
+step-04-migrate-services
+step-05-migrate-components
+step-06-migrate-routing
+step-07-state-management
+step-08-build-test
+```
+
+### Migration Summary
+
+| Metric | Before (AngularJS) | After (React) |
+|--------|--------------------|-|
+| Framework | AngularJS 1.6.10 | React 19 + TypeScript |
+| Build Tool | Grunt | Vite 8 |
+| Package Manager | Bower | npm |
+| Routing | UI-Router 0.4 | React Router 6 |
+| HTTP Client | Restangular | Native fetch |
+| State | $rootScope/$scope | Context API + hooks |
+| Date Formatting | Moment.js | Intl.DateTimeFormat |
+| Utilities | Lodash | Native JS |
+| DOM Manipulation | jQuery | React refs |
+| Type Safety | None | TypeScript strict |
+| Bundle Size | ~1.2 MB (unminified) | 83 KB (gzipped) |
