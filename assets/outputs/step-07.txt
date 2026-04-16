@@ -1,0 +1,54 @@
+=== Step 07: Add State Management ===
+Prompt: Add modern state management using React Context API to replace $rootScope patterns.
+Tool: GitHub Copilot CLI
+
+== State Management Architecture ==
+
+### React Context API (replacing $rootScope)
+
+1. AuthContext (src/context/AuthContext.tsx)
+   - Replaces: $rootScope.currentUser, AuthService, $rootScope.$on('auth:login/logout')
+   - Provides: user, token, isAuthenticated, login(), logout(), loading
+   - Persistence: localStorage for JWT token
+   - Pattern: Provider wraps entire app in App.tsx
+
+2. NotificationContext (src/context/NotificationContext.tsx)
+   - Replaces: $rootScope.notifications, $rootScope.$on('notification:add')
+   - Provides: notifications[], addNotification(), removeNotification(), clearAll()
+   - Auto-dismiss: 5-second timeout per notification
+   - Pattern: Provider wraps app, consumed by NotificationArea and pages
+
+### Custom Hooks as State Containers (replacing $scope)
+
+Each page has a dedicated hook managing its domain state:
+- useFlights: flights[], loading, error, searchFlights, bookFlight
+- useHotels: hotels[], loading, error, searchHotels, getHotelRooms, bookRoom
+- useItinerary: trips[], selectedTrip, loading, loadTrips, selectTrip, addNote, cancelItem
+- useTravelRequests: requests[], loading, loadRequests, submitRequest, updateRequest, cancelRequest
+- useExpenses: reports[], dashboard, loading, loadReports, submitReport, deleteReport, uploadReceipt
+
+### $rootScope Anti-Patterns Eliminated
+
+| AngularJS Pattern              | React Replacement                |
+|-------------------------------|----------------------------------|
+| $rootScope.currentUser        | AuthContext user state            |
+| $rootScope.notifications      | NotificationContext state         |
+| $rootScope.$on('event')       | Context consumer + useCallback   |
+| $rootScope.$emit('event')     | Context dispatch functions        |
+| $scope.$watch(expr, fn)       | useEffect with dependency array  |
+| $scope.$watch(expr, fn, true) | useEffect with JSON.stringify    |
+| $scope variables              | useState / useReducer            |
+| Service singletons            | Custom hooks with useState       |
+| $scope.$apply()               | Automatic with React state       |
+
+### State Flow
+
+App.tsx
+  -> BrowserRouter
+    -> AuthProvider (global auth state)
+      -> NotificationProvider (global notifications)
+        -> Navbar (reads auth, notifications)
+        -> NotificationArea (reads notifications)
+        -> Routes
+          -> ProtectedRoute (reads auth)
+            -> Pages (use domain hooks for local state)
