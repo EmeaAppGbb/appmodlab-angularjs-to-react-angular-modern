@@ -1,0 +1,112 @@
+=== Step 02: Analyze Component Map — AngularJS to React ===
+Prompt: Map all AngularJS components to their modern React equivalents with TypeScript.
+Tool: GitHub Copilot CLI
+
+== Component Migration Map ==
+
+### ROUTING
+| AngularJS                  | React Equivalent              |
+|----------------------------|-------------------------------|
+| ui.router () | react-router-dom v6 (Routes)  |
+|          | Navigate component             |
+| ui-sref                    | Link / NavLink                 |
+| ui-view                    | Outlet                         |
+|  guard    | Route loader / ProtectedRoute  |
+
+### SERVICES → HOOKS / CONTEXT
+| AngularJS Service   | React Equivalent                          |
+|---------------------|-------------------------------------------|
+| AuthService         | useAuth() hook + AuthContext               |
+| ApiService          | useApi() hook (fetch/axios wrapper)        |
+| UserService         | useUser() hook within AuthContext           |
+| FlightSearchService | useFlights() hook                          |
+| HotelBookingService | useHotels() hook                           |
+| ItineraryService    | useItinerary() hook                        |
+| TravelRequestService| useTravelRequests() hook                   |
+| ExpenseService      | useExpenses() hook                         |
+
+### CONTROLLERS → COMPONENTS (TSX)
+| AngularJS Controller       | React Component                    |
+|----------------------------|------------------------------------|
+| login (inline)             | LoginPage.tsx                       |
+| dashboard (inline)         | DashboardPage.tsx                   |
+| FlightSearchController     | FlightSearchPage.tsx                |
+| HotelBookingController     | HotelBookingPage.tsx                |
+| ItineraryController        | ItineraryPage.tsx                   |
+| TravelRequestController    | TravelRequestPage.tsx               |
+| ExpenseController          | ExpensePage.tsx                     |
+
+### DIRECTIVES → COMPONENTS
+| AngularJS Directive    | React Component               |
+|------------------------|-------------------------------|
+| gt-date-picker         | DatePicker.tsx (native input)  |
+| gt-currency-input      | CurrencyInput.tsx              |
+| gt-approval-status     | ApprovalStatus.tsx             |
+
+### FILTERS → UTILITY FUNCTIONS
+| AngularJS Filter  | React Utility                              |
+|-------------------|--------------------------------------------|
+| usdCurrency       | formatCurrency() in utils/format.ts         |
+| gtDateFormat      | formatDate() using Intl.DateTimeFormat      |
+| gtTimeAgo         | getTimeAgo() using Intl.RelativeTimeFormat  |
+| gtDuration        | formatDuration() in utils/format.ts         |
+
+### LIBRARY REPLACEMENTS
+| Legacy Library     | Modern Replacement                   |
+|--------------------|--------------------------------------|
+| jQuery 2.2.4       | React refs + native DOM API          |
+| Bootstrap 3        | CSS Modules / Tailwind / Bootstrap 5 |
+| Moment.js          | Native Date / date-fns               |
+| Lodash             | Native Array/Object methods          |
+| Restangular        | fetch API / axios                    |
+| Bower              | npm                                  |
+| Grunt              | Vite                                 |
+
+### STATE MANAGEMENT
+| AngularJS Pattern     | React Equivalent                    |
+|-----------------------|-------------------------------------|
+| .currentUser| AuthContext (React Context API)      |
+| .notifications | NotificationContext               |
+| . events | Context dispatch / custom events    |
+|  variables      | useState / useReducer               |
+| .         | useEffect with dependencies         |
+| localStorage token    | AuthContext + localStorage           |
+
+### PROJECT STRUCTURE (Target)
+react-app/
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── DatePicker.tsx
+│   │   ├── CurrencyInput.tsx
+│   │   ├── ApprovalStatus.tsx
+│   │   └── Navbar.tsx
+│   ├── pages/               # Route-level page components
+│   │   ├── LoginPage.tsx
+│   │   ├── DashboardPage.tsx
+│   │   ├── FlightSearchPage.tsx
+│   │   ├── HotelBookingPage.tsx
+│   │   ├── ItineraryPage.tsx
+│   │   ├── TravelRequestPage.tsx
+│   │   └── ExpensePage.tsx
+│   ├── hooks/               # Custom hooks (service replacements)
+│   │   ├── useAuth.ts
+│   │   ├── useApi.ts
+│   │   ├── useFlights.ts
+│   │   ├── useHotels.ts
+│   │   ├── useItinerary.ts
+│   │   ├── useTravelRequests.ts
+│   │   └── useExpenses.ts
+│   ├── context/             # React Context providers
+│   │   ├── AuthContext.tsx
+│   │   └── NotificationContext.tsx
+│   ├── utils/               # Utility functions
+│   │   ├── format.ts
+│   │   └── api.ts
+│   ├── types/               # TypeScript interfaces
+│   │   └── index.ts
+│   ├── App.tsx
+│   └── main.tsx
+├── index.html
+├── vite.config.ts
+├── tsconfig.json
+└── package.json
