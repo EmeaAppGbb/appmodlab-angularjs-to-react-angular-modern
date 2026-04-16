@@ -1,0 +1,56 @@
+=== Step 04: Migrate Services ===
+Prompt: Convert all AngularJS services to React hooks and context providers with TypeScript.
+Tool: GitHub Copilot CLI
+
+== Services Migrated ==
+
+### AuthService → AuthContext + useAuth hook
+- src/context/AuthContext.tsx
+- login(email, password) → POST /api/auth/login, stores JWT in localStorage
+- logout() → clears localStorage and state
+- isAuthenticated → derived boolean from token state
+- Replaced: $rootScope.currentUser, $rootScope.('auth:login/logout'), localStorage token
+
+### ApiService → utils/api.ts (apiClient)
+- Typed fetch wrapper with generics: get<T>, post<T>, put<T>, delete<T>
+- Auto-attaches Bearer token from localStorage
+- Replaced: Restangular provider, ddFullRequestInterceptor
+
+### UserService → Integrated into AuthContext
+- getProfile/updatePreferences merged into auth context
+
+### FlightSearchService → useFlights hook
+- src/hooks/useFlights.ts
+- searchFlights(params), bookFlight(flightId, details), getPopularRoutes()
+- Manages loading/error/flights state internally
+- Replaced: Restangular calls, $q promises, Lodash/Moment transformations
+
+### HotelBookingService → useHotels hook
+- src/hooks/useHotels.ts
+- searchHotels(params), getHotelRooms(hotelId, dates), bookRoom(data)
+- Replaced: Restangular, Lodash sortBy, Moment formatting
+
+### ItineraryService → useItinerary hook
+- src/hooks/useItinerary.ts
+- loadTrips(), selectTrip(tripId), addNote(itemId, text), cancelItem(itemId)
+- Optimistic state updates for cancel/note operations
+- Replaced: Restangular, $q, Lodash sumBy
+
+### TravelRequestService → useTravelRequests hook
+- src/hooks/useTravelRequests.ts
+- loadRequests(), submitRequest(data), updateRequest(id, data), cancelRequest(id)
+- Replaced: Restangular CRUD, Moment formatting
+
+### ExpenseService → useExpenses hook
+- src/hooks/useExpenses.ts
+- loadReports(), submitReport(data), deleteReport(id), uploadReceipt(expenseId, file)
+- Dashboard computed from reports (parallel fetch)
+- Replaced: Restangular, FormData for receipt upload, Lodash calculations
+
+== Key Modernization Patterns ==
+- Restangular → native fetch API with typed wrapper
+- $q promises → async/await
+- Lodash utilities → native Array methods (filter, map, reduce, sort)
+- Moment.js → Intl.DateTimeFormat, Intl.RelativeTimeFormat
+- $rootScope events → React Context + useCallback
+- Service injection → hook imports
