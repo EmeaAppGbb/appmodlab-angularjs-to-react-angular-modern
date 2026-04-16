@@ -1,0 +1,33 @@
+=== Step 06: Migrate Routing ===
+Prompt: Convert AngularJS UI-Router to React Router v6 with protected routes.
+Tool: GitHub Copilot CLI
+
+== Routing Migration ==
+
+UI-Router States to React Router v6 Routes (App.tsx)
+
+login (/login) -> Route path="/login" (public)
+dashboard (/dashboard) -> Route path="/dashboard" (protected)
+flights (/flights) -> Route path="/flights" (protected)
+hotels (/hotels) -> Route path="/hotels" (protected)
+itinerary (/itinerary) -> Route path="/itinerary" (protected)
+travelRequest (/travel-request) -> Route path="/travel-request" (protected)
+expenses (/expenses) -> Route path="/expenses" (protected)
+otherwise -> Route path="*" Navigate to /login
+
+Key Changes:
+1. $stateProvider -> Routes/Route declarative JSX
+2. $urlRouterProvider.otherwise -> Navigate component
+3. ui-sref -> Link/NavLink with active styling
+4. $stateChangeStart guard -> ProtectedRoute layout component
+5. data: requireAuth -> ProtectedRoute wrapper (structural protection)
+6. $state.go() -> useNavigate() hook
+
+Eliminated Patterns:
+- $stateProvider.state() configuration
+- $urlRouterProvider default routing
+- ui-sref directive for links
+- ui-view directive for view rendering
+- $stateChangeStart event for route guards
+- $state service for programmatic navigation
+- Route-level controller/template assignment
